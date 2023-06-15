@@ -155,7 +155,7 @@ export type Note = {
 	visibility: 'public' | 'home' | 'followers' | 'specified';
 	visibleUserIds?: User['id'][];
 	localOnly?: boolean;
-	myReaction?: string;
+	myReaction?: string[];
 	reactions: Record<string, number>;
 	renoteCount: number;
 	repliesCount: number;

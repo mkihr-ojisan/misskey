@@ -171,12 +171,12 @@ export class NoteEntityService implements OnModuleInit {
 
 	@bindThis
 	private async populateMyReaction(note: Note, meId: User['id'], _hint_?: {
-		myReactions: Map<Note['id'], NoteReaction | null>;
+		myReactions: Map<Note['id'], NoteReaction[] | null>;
 	}) {
 		if (_hint_?.myReactions) {
 			const reaction = _hint_.myReactions.get(note.id);
 			if (reaction) {
-				return this.reactionService.convertLegacyReaction(reaction.reaction);
+				return reaction.map(r => this.reactionService.convertLegacyReaction(r.reaction));
 			} else if (reaction === null) {
 				return undefined;
 			}
@@ -188,13 +188,13 @@ export class NoteEntityService implements OnModuleInit {
 			return undefined;
 		}
 
-		const reaction = await this.noteReactionsRepository.findOneBy({
+		const reaction = await this.noteReactionsRepository.findBy({
 			userId: meId,
 			noteId: note.id,
 		});
 
-		if (reaction) {
-			return this.reactionService.convertLegacyReaction(reaction.reaction);
+		if (reaction.length > 0) {
+			return reaction.map(r => this.reactionService.convertLegacyReaction(r.reaction));
 		}
 
 		return undefined;
@@ -277,7 +277,7 @@ export class NoteEntityService implements OnModuleInit {
 			detail?: boolean;
 			skipHide?: boolean;
 			_hint_?: {
-				myReactions: Map<Note['id'], NoteReaction | null>;
+				myReactions: Map<Note['id'], NoteReaction[] | null>;
 				packedFiles: Map<Note['fileIds'][number], Packed<'DriveFile'> | null>;
 			};
 		},
@@ -398,7 +398,7 @@ export class NoteEntityService implements OnModuleInit {
 		if (notes.length === 0) return [];
 
 		const meId = me ? me.id : null;
-		const myReactionsMap = new Map<Note['id'], NoteReaction | null>();
+		const myReactionsMap = new Map<Note['id'], NoteReaction[] | null>();
 		if (meId) {
 			const renoteIds = notes.filter(n => n.renoteId != null).map(n => n.renoteId!);
 			// パフォーマンスのためノートが作成されてから1秒以上経っていない場合はリアクションを取得しない
@@ -409,7 +409,7 @@ export class NoteEntityService implements OnModuleInit {
 			});
 
 			for (const target of targets) {
-				myReactionsMap.set(target, myReactions.find(reaction => reaction.noteId === target) ?? null);
+				myReactionsMap.set(target, myReactions.filter(reaction => reaction.noteId === target));
 			}
 		}
 

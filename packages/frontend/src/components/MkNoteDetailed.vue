@@ -107,12 +107,9 @@
 				<button v-else class="button _button" disabled>
 					<i class="ti ti-ban"></i>
 				</button>
-				<button v-if="appearNote.myReaction == null" ref="reactButton" class="button _button" @mousedown="react()">
+				<button ref="reactButton" class="button _button" @mousedown="react()">
 					<i v-if="appearNote.reactionAcceptance === 'likeOnly'" class="ti ti-heart"></i>
 					<i v-else class="ti ti-plus"></i>
-				</button>
-				<button v-if="appearNote.myReaction != null" ref="reactButton" class="button _button reacted" @click="undoReact(appearNote)">
-					<i class="ti ti-minus"></i>
 				</button>
 				<button v-if="defaultStore.state.showClipButtonInNoteFooter" ref="clipButton" class="button _button" @mousedown="clip()">
 					<i class="ti ti-paperclip"></i>
@@ -358,14 +355,6 @@ function react(viaKeyboard = false): void {
 			focus();
 		});
 	}
-}
-
-function undoReact(note): void {
-	const oldReaction = note.myReaction;
-	if (!oldReaction) return;
-	os.api('notes/reactions/delete', {
-		noteId: note.id,
-	});
 }
 
 function onContextmenu(ev: MouseEvent): void {

@@ -501,7 +501,7 @@ export type Endpoints = {
 	'notes/polls/vote': { req: { noteId: Note['id']; choice: number; }; res: null; };
 	'notes/reactions': { req: { noteId: Note['id']; type?: string | null; limit?: number; }; res: NoteReaction[]; };
 	'notes/reactions/create': { req: { noteId: Note['id']; reaction: string; }; res: null; };
-	'notes/reactions/delete': { req: { noteId: Note['id']; }; res: null; };
+	'notes/reactions/delete': { req: { noteId: Note['id']; reaction: string; }; res: null; };
 	'notes/renotes': { req: { limit?: number; sinceId?: Note['id']; untilId?: Note['id']; noteId: Note['id']; }; res: Note[]; };
 	'notes/replies': { req: { limit?: number; sinceId?: Note['id']; untilId?: Note['id']; noteId: Note['id']; }; res: Note[]; };
 	'notes/search-by-tag': { req: TODO; res: TODO; };

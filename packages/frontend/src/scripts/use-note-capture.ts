@@ -30,7 +30,8 @@ export function useNoteCapture(props: {
 				note.value.reactions[reaction] = currentCount + 1;
 
 				if ($i && (body.userId === $i.id)) {
-					note.value.myReaction = reaction;
+					note.value.myReaction ??= [];
+					note.value.myReaction.push(reaction);
 				}
 				break;
 			}
@@ -44,8 +45,8 @@ export function useNoteCapture(props: {
 				note.value.reactions[reaction] = Math.max(0, currentCount - 1);
 				if (note.value.reactions[reaction] === 0) delete note.value.reactions[reaction];
 
-				if ($i && (body.userId === $i.id)) {
-					note.value.myReaction = null;
+				if ($i && (body.userId === $i.id) && note.value.myReaction) {
+					note.value.myReaction = note.value.myReaction.filter(r => r !== reaction);
 				}
 				break;
 			}
