@@ -44,7 +44,7 @@ async function toggleReaction() {
 	if (oldReaction?.includes(props.reaction)) {
 		os.api('notes/reactions/delete', {
 			noteId: props.note.id,
-			reaction: props.reaction,
+			reaction: props.reaction.replace(/@.:$/, ':'),
 		});
 	} else {
 		os.api('notes/reactions/create', {
