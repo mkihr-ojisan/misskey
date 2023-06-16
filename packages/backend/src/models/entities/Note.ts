@@ -107,6 +107,11 @@ export class Note {
 	})
 	public reactions: Record<string, number>;
 
+	@Column('jsonb', {
+		default: {},
+	})
+	public reactionTimestamps: Partial<Record<string, number>>;
+
 	/**
 	 * public ... 公開
 	 * home ... ホームタイムライン(ユーザーページのタイムライン含む)のみに流す

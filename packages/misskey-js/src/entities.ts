@@ -157,6 +157,7 @@ export type Note = {
 	localOnly?: boolean;
 	myReaction?: string[];
 	reactions: Record<string, number>;
+	reactionTimestamps: Partial<Record<string, number>>;
 	renoteCount: number;
 	repliesCount: number;
 	poll?: {

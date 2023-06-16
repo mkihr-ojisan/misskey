@@ -324,6 +324,7 @@ export class NoteEntityService implements OnModuleInit {
 			renoteCount: note.renoteCount,
 			repliesCount: note.repliesCount,
 			reactions: this.reactionService.convertLegacyReactions(note.reactions),
+			reactionTimestamps: Object.fromEntries(Object.entries(note.reactionTimestamps).map(([k, v]) => [this.reactionService.decodeReaction(k).reaction, v])),
 			reactionEmojis: this.customEmojiService.populateEmojis(reactionEmojiNames, host),
 			emojis: host != null ? this.customEmojiService.populateEmojis(note.emojis, host) : undefined,
 			tags: note.tags.length > 0 ? note.tags : undefined,

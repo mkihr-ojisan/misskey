@@ -149,6 +149,10 @@ export const packedNoteSchema = {
 			type: 'object',
 			optional: false, nullable: false,
 		},
+		reactionTimestamps: {
+			type: 'object',
+			optional: false, nullable: false,
+		},
 		renoteCount: {
 			type: 'number',
 			optional: false, nullable: false,

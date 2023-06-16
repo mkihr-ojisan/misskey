@@ -28,6 +28,9 @@ export function useNoteCapture(props: {
 				const currentCount = (note.value.reactions || {})[reaction] || 0;
 
 				note.value.reactions[reaction] = currentCount + 1;
+				if (note.value.reactions[reaction] === 1) {
+					note.value.reactionTimestamps[reaction] = Date.now();
+				}
 
 				if ($i && (body.userId === $i.id)) {
 					note.value.myReaction ??= [];

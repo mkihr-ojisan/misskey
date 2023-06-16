@@ -134,6 +134,20 @@ export class ReactionService {
 			}
 		}
 
+		// その絵文字が初めてリアクションされた場合はreactionTimestampsを更新する
+		const count = await this.noteReactionsRepository.countBy({
+			noteId: note.id,
+			reaction,	
+		});
+		if (count === 1) {
+			const sql = `jsonb_set("reactionTimestamps", '{${reaction}}', '${Date.now()}')`;
+			await this.notesRepository.createQueryBuilder().update()
+				.set({
+					reactionTimestamps: () => sql })
+				.where('id = :id', { id: note.id })
+				.execute();
+		}
+
 		// Increment reactions count
 		const sql = `jsonb_set("reactions", '{${reaction}}', (COALESCE("reactions"->>'${reaction}', '0')::int + 1)::text::jsonb)`;
 		await this.notesRepository.createQueryBuilder().update()
