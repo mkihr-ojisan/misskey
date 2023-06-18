@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import { Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import unzipper from 'unzipper';
+import AdmZip from 'adm-zip';
 import { DI } from '@/di-symbols.js';
 import type { EmojisRepository, DriveFilesRepository, UsersRepository } from '@/models/index.js';
 import type { Config } from '@/config.js';
@@ -72,51 +72,51 @@ export class ImportCustomEmojisProcessorService {
 		}
 
 		const outputPath = path + '/emojis';
-		const unzipStream = fs.createReadStream(destPath);
-		const extractor = unzipper.Extract({ path: outputPath });
-		extractor.on('close', async () => {
-			const metaRaw = fs.readFileSync(outputPath + '/meta.json', 'utf-8');
-			const meta = JSON.parse(metaRaw);
 
-			for (const record of meta.emojis) {
-				if (!record.downloaded) continue;
-				if (!/^[a-zA-Z0-9_]+?([a-zA-Z0-9\.]+)?$/.test(record.fileName)) {
-					this.logger.error(`invalid filename: ${record.fileName}`);
-					continue;
-				}
-				const emojiInfo = record.emoji;
-				if (!/^[a-zA-Z0-9_]+$/.test(emojiInfo.name)) {
-					this.logger.error(`invalid emojiname: ${emojiInfo.name}`);
-					continue;
-				}
-				const emojiPath = outputPath + '/' + record.fileName;
-				await this.emojisRepository.delete({
-					name: emojiInfo.name,
-				});
-				const driveFile = await this.driveService.addFile({
-					user: null,
-					path: emojiPath,
-					name: record.fileName,
-					force: true,
-				});
-				await this.customEmojiService.add({
-					name: emojiInfo.name,
-					category: emojiInfo.category,
-					host: null,
-					aliases: emojiInfo.aliases,
-					driveFile,
-					license: emojiInfo.license,
-					isSensitive: emojiInfo.isSensitive,
-					localOnly: emojiInfo.localOnly,
-					roleIdsThatCanBeUsedThisEmojiAsReaction: [],
-				});
-			}
-
-			cleanup();
-	
-			this.logger.succ('Imported');
-		});
-		unzipStream.pipe(extractor);
 		this.logger.succ(`Unzipping to ${outputPath}`);
+
+		const extractor = new AdmZip(destPath);
+		extractor.extractAllTo(outputPath, true);
+		
+		const metaRaw = fs.readFileSync(outputPath + '/meta.json', 'utf-8');
+		const meta = JSON.parse(metaRaw);
+
+		for (const record of meta.emojis) {
+			if (!record.downloaded) continue;
+			if (!/^[a-zA-Z0-9_]+?([a-zA-Z0-9\.]+)?$/.test(record.fileName)) {
+				this.logger.error(`invalid filename: ${record.fileName}`);
+				continue;
+			}
+			const emojiInfo = record.emoji;
+			if (!/^[a-zA-Z0-9_]+$/.test(emojiInfo.name)) {
+				this.logger.error(`invalid emojiname: ${emojiInfo.name}`);
+				continue;
+			}
+			const emojiPath = outputPath + '/' + record.fileName;
+			await this.emojisRepository.delete({
+				name: emojiInfo.name,
+			});
+			const driveFile = await this.driveService.addFile({
+				user: null,
+				path: emojiPath,
+				name: record.fileName,
+				force: true,
+			});
+			await this.customEmojiService.add({
+				name: emojiInfo.name,
+				category: emojiInfo.category,
+				host: null,
+				aliases: emojiInfo.aliases,
+				driveFile,
+				license: emojiInfo.license,
+				isSensitive: emojiInfo.isSensitive,
+				localOnly: emojiInfo.localOnly,
+				roleIdsThatCanBeUsedThisEmojiAsReaction: [],
+			});
+		}
+
+		cleanup();
+	
+		this.logger.succ('Imported');
 	}
 }

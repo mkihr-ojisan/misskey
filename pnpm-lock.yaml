@@ -134,6 +134,9 @@ importers:
       accepts:
         specifier: 1.3.8
         version: 1.3.8
+      adm-zip:
+        specifier: ^0.5.10
+        version: 0.5.10
       ajv:
         specifier: 8.12.0
         version: 8.12.0
@@ -490,6 +493,9 @@ importers:
       '@types/accepts':
         specifier: 1.3.5
         version: 1.3.5
+      '@types/adm-zip':
+        specifier: ^0.5.0
+        version: 0.5.0
       '@types/archiver':
         specifier: 5.3.2
         version: 5.3.2
@@ -1015,7 +1021,7 @@ importers:
     dependencies:
       '@swc/cli':
         specifier: 0.1.62
-        version: 0.1.62(@swc/core@1.3.61)(chokidar@3.5.3)
+        version: 0.1.62(@swc/core@1.3.56)
       '@swc/core':
         specifier: 1.3.56
         version: 1.3.56
@@ -6948,6 +6954,26 @@ packages:
       - supports-color
     dev: true
 
+  /@swc/cli@0.1.62(@swc/core@1.3.56):
+    resolution: {integrity: sha512-kOFLjKY3XH1DWLfXL1/B5MizeNorHR8wHKEi92S/Zi9Md/AK17KSqR8MgyRJ6C1fhKHvbBCl8wboyKAFXStkYw==}
+    engines: {node: '>= 12.13'}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': ^1.2.66
+      chokidar: ^3.5.1
+    peerDependenciesMeta:
+      chokidar:
+        optional: true
+    dependencies:
+      '@mole-inc/bin-wrapper': 8.0.1
+      '@swc/core': 1.3.56
+      commander: 7.2.0
+      fast-glob: 3.2.12
+      semver: 7.5.1
+      slash: 3.0.0
+      source-map: 0.7.4
+    dev: false
+
   /@swc/cli@0.1.62(@swc/core@1.3.61)(chokidar@3.5.3):
     resolution: {integrity: sha512-kOFLjKY3XH1DWLfXL1/B5MizeNorHR8wHKEi92S/Zi9Md/AK17KSqR8MgyRJ6C1fhKHvbBCl8wboyKAFXStkYw==}
     engines: {node: '>= 12.13'}
@@ -7436,6 +7462,12 @@ packages:
 
   /@types/accepts@1.3.5:
     resolution: {integrity: sha512-jOdnI/3qTpHABjM5cx1Hc0sKsPoYCp+DP/GJRGtDlPd7fiV9oXGGIcjW/ZOxLIvjGz8MA+uMZI9metHlgqbgwQ==}
+    dependencies:
+      '@types/node': 20.2.5
+    dev: true
+
+  /@types/adm-zip@0.5.0:
+    resolution: {integrity: sha512-FCJBJq9ODsQZUNURo5ILAQueuA8WJhRvuihS3ke2iI25mJlfV2LK8jG2Qj2z2AWg8U0FtWWqBHVRetceLskSaw==}
     dependencies:
       '@types/node': 20.2.5
     dev: true
@@ -8808,7 +8840,6 @@ packages:
     resolution: {integrity: sha512-x0HvcHqVJNTPk/Bw8JbLWlWoo6Wwnsug0fnYYro1HBrjxZ3G7/AZk7Ahv8JwDe1uIcz8eBqvu86FuF1POiG7vQ==}
     engines: {node: '>=6.0'}
     dev: false
-    optional: true
 
   /agent-base@4.3.0:
     resolution: {integrity: sha512-salcGninV0nPrwpGNn4VTXBb1SOuXQBiqbrNXoeizJsHrsL6ERFM2Ne3JUSBWRE6aeNJI2ROP/WEEIDUiDe3cg==}
