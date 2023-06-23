@@ -215,12 +215,20 @@ export class ReactionService {
 		});
 
 		// リアクションされたユーザーがローカルユーザーなら通知を作成
+		// 同じノートへの2つ目以降のリアクションは通知しない
 		if (note.userHost === null) {
-			this.notificationService.createNotification(note.userId, 'reaction', {
-				notifierId: user.id,
+			const count = await this.noteReactionsRepository.countBy({
 				noteId: note.id,
-				reaction: reaction,
+				userId: user.id,
 			});
+
+			if (count === 1) {
+				this.notificationService.createNotification(note.userId, 'reaction', {
+					notifierId: user.id,
+					noteId: note.id,
+					reaction: reaction,
+				});
+			}
 		}
 
 		//#region 配信
