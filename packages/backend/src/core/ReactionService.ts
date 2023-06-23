@@ -154,17 +154,8 @@ export class ReactionService {
 			await this.noteReactionsRepository.insert(record);
 		} catch (e) {
 			if (isDuplicateKeyValueError(e)) {
-				const exists = await this.noteReactionsRepository.findOneByOrFail({
-					noteId: note.id,
-					userId: user.id,
-				});
-
-				if (exists.reaction !== reaction) {
-					await this.noteReactionsRepository.insert(record);
-				} else {
-					// 同じリアクションがすでにされていたらエラー
-					throw new IdentifiableError('51c42bb4-931a-456b-bff7-e5a8a70dd298');
-				}
+				// 同じリアクションがすでにされていたらエラー
+				throw new IdentifiableError('51c42bb4-931a-456b-bff7-e5a8a70dd298');
 			} else {
 				throw e;
 			}
