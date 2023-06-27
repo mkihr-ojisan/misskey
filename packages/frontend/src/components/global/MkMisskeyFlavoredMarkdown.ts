@@ -197,8 +197,8 @@ export default function(props: {
 							style = '';
 							break;
 						}
-						const x = Math.min(parseFloat(token.props.args.x ?? '1'), 5);
-						const y = Math.min(parseFloat(token.props.args.y ?? '1'), 5);
+						const x = parseFloat(token.props.args.x ?? '1');
+						const y = parseFloat(token.props.args.y ?? '1');
 						style = `transform: scale(${x}, ${y});`; 
 						scale = scale * Math.max(x, y);
 						break;
