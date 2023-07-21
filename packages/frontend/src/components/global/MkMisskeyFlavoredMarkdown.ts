@@ -199,7 +199,7 @@ export default function(props: {
 						}
 						const x = parseFloat(token.props.args.x ?? '1');
 						const y = parseFloat(token.props.args.y ?? '1');
-						style = `transform: scale(${x}, ${y});`; 
+						style = `transform: scale(${x}, ${y});`;
 						scale = scale * Math.max(x, y);
 						break;
 					}
@@ -256,7 +256,7 @@ export default function(props: {
 			case 'mention': {
 				return [h(MkMention, {
 					key: Math.random(),
-					host: (token.props.host == null && props.author && props.author.host != null ? props.author.host : token.props.host) || host,
+					host: (token.props.host == null && props.author && props.author.host != null ? props.author.host : token.props.host) ?? host,
 					username: token.props.username,
 				})];
 			}

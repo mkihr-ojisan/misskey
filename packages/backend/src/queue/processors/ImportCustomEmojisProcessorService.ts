@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import { Inject, Injectable } from '@nestjs/common';
+import { ZipReader } from 'slacc';
 import { DataSource } from 'typeorm';
 import AdmZip from 'adm-zip';
 import { DI } from '@/di-symbols.js';
@@ -77,7 +78,7 @@ export class ImportCustomEmojisProcessorService {
 
 		const extractor = new AdmZip(destPath);
 		extractor.extractAllTo(outputPath, true);
-		
+
 		const metaRaw = fs.readFileSync(outputPath + '/meta.json', 'utf-8');
 		const meta = JSON.parse(metaRaw);
 
@@ -116,7 +117,7 @@ export class ImportCustomEmojisProcessorService {
 		}
 
 		cleanup();
-	
+
 		this.logger.succ('Imported');
 	}
 }
