@@ -46,6 +46,7 @@ import { emojilist, getEmojiName } from '@/scripts/emojilist';
 import { i18n } from '@/i18n';
 import { miLocalStorage } from '@/local-storage';
 import { customEmojis } from '@/custom-emojis';
+import { getRomajiVariations } from '@/scripts/romaji-variations';
 
 type EmojiDef = {
 	emoji: string;
@@ -240,23 +241,27 @@ function exec() {
 		const matched: EmojiDef[] = [];
 		const max = 30;
 
-		emojiDb.value.some(x => {
-			if (x.name.startsWith(props.q ?? '') && !x.aliasOf && !matched.some(y => y.emoji === x.emoji)) matched.push(x);
-			return matched.length === max;
-		});
+		const romajiVariations = getRomajiVariations(props.q);
 
-		if (matched.length < max) {
+		for (const q of romajiVariations) {
 			emojiDb.value.some(x => {
-				if (x.name.startsWith(props.q ?? '') && !matched.some(y => y.emoji === x.emoji)) matched.push(x);
+				if (x.name.startsWith(q) && !x.aliasOf && !matched.some(y => y.emoji === x.emoji)) matched.push(x);
 				return matched.length === max;
 			});
-		}
 
-		if (matched.length < max) {
-			emojiDb.value.some(x => {
-				if (x.name.includes(props.q ?? '') && !matched.some(y => y.emoji === x.emoji)) matched.push(x);
-				return matched.length === max;
-			});
+			if (matched.length < max) {
+				emojiDb.value.some(x => {
+					if (x.name.startsWith(q) && !matched.some(y => y.emoji === x.emoji)) matched.push(x);
+					return matched.length === max;
+				});
+			}
+
+			if (matched.length < max) {
+				emojiDb.value.some(x => {
+					if (x.name.includes(q) && !matched.some(y => y.emoji === x.emoji)) matched.push(x);
+					return matched.length === max;
+				});
+			}
 		}
 
 		emojis.value = matched;
