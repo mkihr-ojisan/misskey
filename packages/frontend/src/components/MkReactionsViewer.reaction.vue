@@ -3,7 +3,7 @@
 	ref="buttonEl"
 	v-ripple="canToggle"
 	class="_button"
-	:class="[$style.root, { [$style.reacted]: note.myReaction?.includes(reaction), [$style.canToggle]: canToggle, [$style.large]: defaultStore.state.largeNoteReactions }]"
+	:class="[$style.root, { [$style.reacted]: note.myReactions?.includes(reaction), [$style.canToggle]: canToggle, [$style.large]: defaultStore.state.largeNoteReactions }]"
 	@click="toggleReaction()"
 >
 	<MkReactionIcon :class="$style.icon" :reaction="reaction" :emojiUrl="note.reactionEmojis[reaction.substring(1, reaction.length - 1)]"/>
@@ -40,7 +40,7 @@ async function toggleReaction() {
 
 	// TODO: その絵文字を使う権限があるかどうか確認
 
-	const oldReaction = props.note.myReaction;
+	const oldReaction = props.note.myReactions;
 	if (oldReaction?.includes(props.reaction)) {
 		os.api('notes/reactions/delete', {
 			noteId: props.note.id,

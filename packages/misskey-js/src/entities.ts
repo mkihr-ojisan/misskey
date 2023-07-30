@@ -169,7 +169,8 @@ export type Note = {
 	visibility: 'public' | 'home' | 'followers' | 'specified';
 	visibleUserIds?: User['id'][];
 	localOnly?: boolean;
-	myReaction?: string[];
+	myReaction?: string; // 互換性のため残す
+	myReactions: string[];
 	reactions: Record<string, number>;
 	reactionTimestamps: Partial<Record<string, number>>;
 	renoteCount: number;

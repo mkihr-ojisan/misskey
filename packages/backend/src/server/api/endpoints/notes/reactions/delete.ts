@@ -37,7 +37,7 @@ export const paramDef = {
 	type: 'object',
 	properties: {
 		noteId: { type: 'string', format: 'misskey:id' },
-		reaction: { type: 'string' },
+		reaction: { type: 'string', nullable: true }, // 複数リアクションに対応していないクライアントからのリクエストにはreactionが含まれない
 	},
 	required: ['noteId'],
 } as const;

@@ -2502,7 +2502,8 @@ type Note = {
     visibility: 'public' | 'home' | 'followers' | 'specified';
     visibleUserIds?: User['id'][];
     localOnly?: boolean;
-    myReaction?: string;
+		myReaction?: string;
+    myReactions: string[];
     reactions: Record<string, number>;
     renoteCount: number;
     repliesCount: number;

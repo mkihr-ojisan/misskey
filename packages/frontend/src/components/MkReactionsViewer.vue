@@ -54,8 +54,8 @@ watch([() => props.note.reactions, () => props.maxNumber], ([newSource, maxNumbe
 
 	newReactions = newReactions.slice(0, props.maxNumber);
 
-	if (props.note.myReaction) {
-		for (const reaction of props.note.myReaction.filter(r => !newReactions.map(([x]) => x).includes(r))) {
+	if (props.note.myReactions) {
+		for (const reaction of props.note.myReactions.filter(r => !newReactions.map(([x]) => x).includes(r))) {
 			newReactions.push([reaction, newSource[reaction]]);
 		}
 	}

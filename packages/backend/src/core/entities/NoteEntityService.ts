@@ -306,6 +306,8 @@ export class NoteEntityService implements OnModuleInit {
 			.map(x => this.reactionService.decodeReaction(x).reaction.replaceAll(':', ''));
 		const packedFiles = options?._hint_?.packedFiles;
 
+		const myReactions = meId && await this.populateMyReaction(note, meId, options?._hint_);
+
 		const packed: Packed<'Note'> = await awaitAll({
 			id: note.id,
 			createdAt: note.createdAt.toISOString(),
@@ -353,8 +355,9 @@ export class NoteEntityService implements OnModuleInit {
 
 				poll: note.hasPoll ? this.populatePoll(note, meId) : undefined,
 
-				...(meId ? {
-					myReaction: this.populateMyReaction(note, meId, options?._hint_),
+				...(myReactions ? {
+					myReactions,
+					myReaction: myReactions[0], // 複数リアクションに対応していないクライアントのためにmyReactionも返す
 				} : {}),
 			} : {}),
 		});

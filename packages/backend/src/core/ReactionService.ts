@@ -164,7 +164,7 @@ export class ReactionService {
 		// その絵文字が初めてリアクションされた場合はreactionTimestampsを更新する
 		const count = await this.noteReactionsRepository.countBy({
 			noteId: note.id,
-			reaction,	
+			reaction,
 		});
 		if (count === 1) {
 			const sql = `jsonb_set("reactionTimestamps", '{${reaction}}', '${Date.now()}')`;
@@ -257,10 +257,13 @@ export class ReactionService {
 	@bindThis
 	public async delete(user: { id: User['id']; host: User['host']; isBot: User['isBot']; }, note: Note, reaction?: string | null) {
 		// if already unreacted
-		const exist = await this.noteReactionsRepository.findOneBy({
-			noteId: note.id,
-			userId: user.id,
-			reaction: reaction ?? undefined,
+		const exist = await this.noteReactionsRepository.findOne({
+			where: {
+				noteId: note.id,
+				userId: user.id,
+				reaction: reaction ?? undefined, // 複数リアクションに対応していないクライアントからのリクエストにはreactionが含まれない。この場合は最後に付けられたリアクションを削除する
+			},
+			order: reaction ? undefined : { createdAt: 'DESC' },
 		});
 
 		if (exist == null) {
