@@ -229,10 +229,9 @@ export class ReactionService {
 
 			if (count === 1) {
 				this.notificationService.createNotification(note.userId, 'reaction', {
-					notifierId: user.id,
 					noteId: note.id,
 					reaction: reaction,
-				});
+				}, user.id);
 			}
 		}
 
