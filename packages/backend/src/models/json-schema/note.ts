@@ -178,6 +178,15 @@ export const packedNoteSchema = {
 			type: 'string',
 			optional: true, nullable: false,
 		},
+		reactionAndUserPairCache: {
+			type: 'array',
+			optional: true, nullable: false,
+			items: {
+				type: 'string',
+				optional: false, nullable: false,
+			},
+		},
+
 		myReaction: { // 複数リアクションに対応していないクライアント用
 			type: 'object',
 			optional: true, nullable: true,

@@ -30,6 +30,7 @@ import { RoleService } from '@/core/RoleService.js';
 import { FeaturedService } from '@/core/FeaturedService.js';
 
 const FALLBACK = '❤';
+const PER_NOTE_REACTION_USER_PAIR_CACHE_MAX = 16;
 
 const legacies: Record<string, string> = {
 	'like': '👍',
@@ -148,13 +149,12 @@ export class ReactionService {
 					reaction = FALLBACK;
 				}
 			} else {
-				reaction = this.normalize(reaction ?? null);
+				reaction = this.normalize(reaction);
 			}
 		}
 
 		const record: MiNoteReaction = {
-			id: this.idService.genId(),
-			createdAt: new Date(),
+			id: this.idService.gen(),
 			noteId: note.id,
 			userId: user.id,
 			reaction,
@@ -191,6 +191,9 @@ export class ReactionService {
 		await this.notesRepository.createQueryBuilder().update()
 			.set({
 				reactions: () => sql,
+				...(note.reactionAndUserPairCache.length < PER_NOTE_REACTION_USER_PAIR_CACHE_MAX ? {
+					reactionAndUserPairCache: () => `array_append("reactionAndUserPairCache", '${user.id}/${reaction}')`,
+				} : {}),
 			})
 			.where('id = :id', { id: note.id })
 			.execute();
@@ -290,7 +293,7 @@ export class ReactionService {
 				userId: user.id,
 				reaction: reaction ?? undefined, // 複数リアクションに対応していないクライアントからのリクエストにはreactionが含まれない。この場合は最後に付けられたリアクションを削除する
 			},
-			order: reaction ? undefined : { createdAt: 'DESC' },
+			order: reaction ? undefined : { id: 'DESC' }, // と思ったけどnote_reactionからcreated_atが消えてしまったのでidでソートする
 		});
 
 		if (exist == null) {
@@ -309,6 +312,7 @@ export class ReactionService {
 		await this.notesRepository.createQueryBuilder().update()
 			.set({
 				reactions: () => sql,
+				reactionAndUserPairCache: () => `array_remove("reactionAndUserPairCache", '${user.id}/${exist.reaction}')`,
 			})
 			.where('id = :id', { id: note.id })
 			.execute();

@@ -46,7 +46,7 @@ async function toggleReaction() {
 	// TODO: その絵文字を使う権限があるかどうか確認
 
 	const oldReaction = props.note.myReactions;
-	if (oldReaction.includes(props.reaction)) {
+	if (oldReaction && oldReaction.includes(props.reaction)) {
 		os.api('notes/reactions/delete', {
 			noteId: props.note.id,
 			reaction: props.reaction.replace(/@.:$/, ':'),
