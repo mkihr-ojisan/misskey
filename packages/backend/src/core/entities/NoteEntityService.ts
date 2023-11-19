@@ -340,6 +340,7 @@ export class NoteEntityService implements OnModuleInit {
 				name: channel.name,
 				color: channel.color,
 				isSensitive: channel.isSensitive,
+				allowRenoteToExternal: channel.allowRenoteToExternal,
 			} : undefined,
 			mentions: note.mentions.length > 0 ? note.mentions : undefined,
 			uri: note.uri ?? undefined,
@@ -364,9 +365,8 @@ export class NoteEntityService implements OnModuleInit {
 
 				poll: note.hasPoll ? this.populatePoll(note, meId) : undefined,
 
-				...(myReactions ? {
-					myReactions,
-					myReaction: myReactions[0], // 複数リアクションに対応していないクライアントのためにmyReactionも返す
+				...(meId && Object.keys(note.reactions).length > 0 ? {
+					myReaction: this.populateMyReaction(note, meId, options?._hint_),
 				} : {}),
 			} : {}),
 		});
