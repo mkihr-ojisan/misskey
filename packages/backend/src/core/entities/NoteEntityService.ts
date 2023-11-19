@@ -307,7 +307,7 @@ export class NoteEntityService implements OnModuleInit {
 			.map(x => this.reactionService.decodeReaction(x).reaction.replaceAll(':', ''));
 		const packedFiles = options?._hint_?.packedFiles;
 
-		const myReactions = meId && Object.keys(note.reactions).length > 0 && await this.populateMyReaction(note, meId, options?._hint_);
+		const myReactions = meId && Object.keys(note.reactions).length > 0 ? await this.populateMyReaction(note, meId, options?._hint_) : undefined;
 
 		const packed: Packed<'Note'> = await awaitAll({
 			id: note.id,
@@ -365,9 +365,8 @@ export class NoteEntityService implements OnModuleInit {
 
 				poll: note.hasPoll ? this.populatePoll(note, meId) : undefined,
 
-				...(meId && Object.keys(note.reactions).length > 0 ? {
-					myReaction: this.populateMyReaction(note, meId, options?._hint_),
-				} : {}),
+				myReactions,
+				myReaction: myReactions?.[0]
 			} : {}),
 		});
 
