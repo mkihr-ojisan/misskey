@@ -241,8 +241,8 @@ export default function (props: MfmProps, { emit }: { emit: SetupContext<MfmEven
 							style = '';
 							break;
 						}
-						const x = Math.min(safeParseFloat(token.props.args.x) ?? 1, 5);
-						const y = Math.min(safeParseFloat(token.props.args.y) ?? 1, 5);
+						const x = safeParseFloat(token.props.args.x) ?? 1;
+						const y = safeParseFloat(token.props.args.y) ?? 1;
 						style = `transform: scale(${x}, ${y});`;
 						scale = scale * Math.max(x, y);
 						break;
