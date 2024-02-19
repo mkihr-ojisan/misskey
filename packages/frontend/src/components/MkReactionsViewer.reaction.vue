@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 	ref="buttonEl"
 	v-ripple="canToggle"
 	class="_button"
-	:class="[$style.root, { [$style.reacted]: note.myReaction == reaction, [$style.canToggle]: canToggle, [$style.small]: defaultStore.state.reactionsDisplaySize === 'small', [$style.large]: defaultStore.state.reactionsDisplaySize === 'large' }]"
+	:class="[$style.root, { [$style.reacted]: note.myReactions?.includes(reaction), [$style.canToggle]: canToggle, [$style.small]: defaultStore.state.reactionsDisplaySize === 'small', [$style.large]: defaultStore.state.reactionsDisplaySize === 'large' }]"
 	@click="toggleReaction()"
 	@contextmenu.prevent.stop="menu"
 >
@@ -63,18 +63,8 @@ const canGetInfo = computed(() => !props.reaction.match(/@\w/) && props.reaction
 async function toggleReaction() {
 	if (!canToggle.value) return;
 
-	const oldReaction = props.note.myReaction;
-	if (oldReaction) {
-		const confirm = await os.confirm({
-			type: 'warning',
-			text: oldReaction !== props.reaction ? i18n.ts.changeReactionConfirm : i18n.ts.cancelReactionConfirm,
-		});
-		if (confirm.canceled) return;
-
-		if (oldReaction !== props.reaction) {
-			sound.playMisskeySfx('reaction');
-		}
-
+	const oldReactions = props.note.myReactions;
+	if (oldReactions?.includes(props.reaction)) {
 		if (mock) {
 			emit('reactionToggled', props.reaction, (props.count - 1));
 			return;
@@ -82,13 +72,7 @@ async function toggleReaction() {
 
 		misskeyApi('notes/reactions/delete', {
 			noteId: props.note.id,
-		}).then(() => {
-			if (oldReaction !== props.reaction) {
-				misskeyApi('notes/reactions/create', {
-					noteId: props.note.id,
-					reaction: props.reaction,
-				});
-			}
+			reaction: props.reaction.replace(/@.:$/, ':'),
 		});
 	} else {
 		sound.playMisskeySfx('reaction');

@@ -35,9 +35,15 @@ export function useNoteCapture(props: {
 				const currentCount = (note.value.reactions || {})[reaction] || 0;
 
 				note.value.reactions[reaction] = currentCount + 1;
+				if (note.value.reactions[reaction] === 1) {
+					note.value.reactionTimestamps ??= {};
+					note.value.reactionTimestamps[reaction] = Date.now();
+				}
 
 				if ($i && (body.userId === $i.id)) {
 					note.value.myReaction = reaction;
+					note.value.myReactions ??= [];
+					note.value.myReactions.push(reaction);
 				}
 				break;
 			}
@@ -52,7 +58,8 @@ export function useNoteCapture(props: {
 				if (note.value.reactions[reaction] === 0) delete note.value.reactions[reaction];
 
 				if ($i && (body.userId === $i.id)) {
-					note.value.myReaction = null;
+					note.value.myReactions = (note.value.myReactions ?? []).filter(r => r !== reaction);
+					note.value.myReaction = note.value.myReactions[0] ?? null;
 				}
 				break;
 			}

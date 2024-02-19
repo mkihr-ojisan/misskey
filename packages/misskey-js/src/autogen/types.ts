@@ -3983,6 +3983,10 @@ export type components = {
       reactionAndUserPairCache?: string[];
       clippedCount?: number;
       myReaction?: string | null;
+      myReactions?: string[];
+      reactionTimestamps?: {
+        [key: string]: number;
+      };
     };
     NoteReaction: {
       /**
@@ -21179,6 +21183,7 @@ export type operations = {
         'application/json': {
           /** Format: misskey:id */
           noteId: string;
+          reaction?: string;
         };
       };
     };

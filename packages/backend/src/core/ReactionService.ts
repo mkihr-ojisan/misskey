@@ -166,22 +166,25 @@ export class ReactionService {
 			await this.noteReactionsRepository.insert(record);
 		} catch (e) {
 			if (isDuplicateKeyValueError(e)) {
-				const exists = await this.noteReactionsRepository.findOneByOrFail({
-					noteId: note.id,
-					userId: user.id,
-				});
-
-				if (exists.reaction !== reaction) {
-					// 別のリアクションがすでにされていたら置き換える
-					await this.delete(user, note);
-					await this.noteReactionsRepository.insert(record);
-				} else {
-					// 同じリアクションがすでにされていたらエラー
-					throw new IdentifiableError('51c42bb4-931a-456b-bff7-e5a8a70dd298');
-				}
+				// 同じリアクションがすでにされていたらエラー
+				throw new IdentifiableError('51c42bb4-931a-456b-bff7-e5a8a70dd298');
 			} else {
 				throw e;
 			}
+		}
+
+		// その絵文字が初めてリアクションされた場合はreactionTimestampsを更新する
+		const count = await this.noteReactionsRepository.countBy({
+			noteId: note.id,
+			reaction,
+		});
+		if (count === 1) {
+			const sql = `jsonb_set("reactionTimestamps", '{${reaction}}', '${Date.now()}')`;
+			await this.notesRepository.createQueryBuilder().update()
+				.set({
+					reactionTimestamps: () => sql })
+				.where('id = :id', { id: note.id })
+				.execute();
 		}
 
 		// Increment reactions count
@@ -275,11 +278,12 @@ export class ReactionService {
 	}
 
 	@bindThis
-	public async delete(user: { id: MiUser['id']; host: MiUser['host']; isBot: MiUser['isBot']; }, note: MiNote) {
+	public async delete(user: { id: MiUser['id']; host: MiUser['host']; isBot: MiUser['isBot']; }, note: MiNote, reaction?: string) {
 		// if already unreacted
 		const exist = await this.noteReactionsRepository.findOneBy({
 			noteId: note.id,
 			userId: user.id,
+			reaction,
 		});
 
 		if (exist == null) {
