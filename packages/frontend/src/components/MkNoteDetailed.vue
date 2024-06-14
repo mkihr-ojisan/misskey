@@ -441,10 +441,10 @@ function undoReact(targetNote: Misskey.entities.Note): void {
 }
 
 function toggleReact() {
-	if (appearNote.value.myReaction == null) {
-		react();
-	} else {
+	if (appearNote.value.reactionAcceptance === 'likeOnly' && appearNote.value.myReaction != null) {
 		undoReact(appearNote.value);
+	} else {
+		react();
 	}
 }
 
